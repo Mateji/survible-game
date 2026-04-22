@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
+import { WebSocketTransport } from "@colyseus/ws-transport";
 import { WorldRoom } from "./rooms/WorldRoom";
 import { WORLD_ROOM_NAME } from "@survible/shared";
 
@@ -21,7 +22,9 @@ app.use("/colyseus", monitor());
 const server = http.createServer(app);
 
 const gameServer = new Server({
-    server
+    transport: new WebSocketTransport({
+        server
+    })
 });
 
 gameServer.define(WORLD_ROOM_NAME, WorldRoom);

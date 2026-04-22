@@ -10,3 +10,5 @@ export interface PlayerSnapshot {
 }
 
 export const WORLD_ROOM_NAME = "world";
+
+export * from "./movement";
