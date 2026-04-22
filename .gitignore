@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime / temp
+tmp/
+temp/
+*.tmp
+
+# Editor / IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+.idea/
+*.swp
+*.swo
+
+# OS / filesystem
+.DS_Store
+Thumbs.db
+
+# Testing
+playwright-report/
+test-results/
+
+# Local database files
+*.sqlite
+*.sqlite3
+
+# Optional generated assets / caches
+.cache/
+.turbo/
+
+# Package manager files to keep
+!pnpm-lock.yaml
