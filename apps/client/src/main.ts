@@ -10,6 +10,14 @@ import {
     type WorldState
 } from "@survible/shared";
 
+interface PlayerRenderState {
+    circle: Phaser.GameObjects.Arc;
+    targetX: number;
+    targetY: number;
+}
+
+const INTERPOLATION_SPEED = 12;
+
 class MainScene extends Phaser.Scene {
     private room: Room | null = null;
 
@@ -22,7 +30,7 @@ class MainScene extends Phaser.Scene {
         d: Phaser.Input.Keyboard.Key;
     } | null = null;
 
-    private playerCirclesBySessionId: Record<string, Phaser.GameObjects.Arc> = {};
+    private playerRenderStateBySessionId: Record<string, PlayerRenderState> = {};
 
     public constructor() {
         super("main");
@@ -68,7 +76,7 @@ class MainScene extends Phaser.Scene {
         }
     }
 
-    public update(): void {
+    public update(_time: number, delta: number): void {
         if (!this.room || !this.cursors || !this.wasdKeys) {
             return;
         }
@@ -81,6 +89,14 @@ class MainScene extends Phaser.Scene {
         };
 
         this.room.send(PLAYER_MOVE_MESSAGE, inputState);
+
+        const interpolationAlpha = Math.min(1, (delta / 1000) * INTERPOLATION_SPEED);
+
+        for (const renderState of Object.values(this.playerRenderStateBySessionId)) {
+            const interpolatedX = Phaser.Math.Linear(renderState.circle.x, renderState.targetX, interpolationAlpha);
+            const interpolatedY = Phaser.Math.Linear(renderState.circle.y, renderState.targetY, interpolationAlpha);
+            renderState.circle.setPosition(interpolatedX, interpolatedY);
+        }
     }
 
     private applyWorldState(worldState: WorldState): void {
@@ -90,29 +106,37 @@ class MainScene extends Phaser.Scene {
             this.updatePlayerCircle(sessionId, playerState);
         }
 
-        for (const [sessionId, circle] of Object.entries(this.playerCirclesBySessionId)) {
+        for (const [sessionId, renderState] of Object.entries(this.playerRenderStateBySessionId)) {
             if (!activeSessionIds.has(sessionId)) {
-                circle.destroy();
-                delete this.playerCirclesBySessionId[sessionId];
+                renderState.circle.destroy();
+                delete this.playerRenderStateBySessionId[sessionId];
             }
         }
     }
 
     private updatePlayerCircle(sessionId: string, playerState: PlayerState): void {
-        let playerCircle = this.playerCirclesBySessionId[sessionId];
+        let renderState = this.playerRenderStateBySessionId[sessionId];
 
-        if (!playerCircle) {
-            playerCircle = this.add.circle(
+        if (!renderState) {
+            const playerCircle = this.add.circle(
                 playerState.position.x,
                 playerState.position.y,
                 DEFAULT_PLAYER_RADIUS,
                 this.resolvePlayerColor(playerState)
             );
-            this.playerCirclesBySessionId[sessionId] = playerCircle;
+
+            renderState = {
+                circle: playerCircle,
+                targetX: playerState.position.x,
+                targetY: playerState.position.y
+            };
+
+            this.playerRenderStateBySessionId[sessionId] = renderState;
         }
 
-        playerCircle.setPosition(playerState.position.x, playerState.position.y);
-        playerCircle.setFillStyle(this.resolvePlayerColor(playerState));
+        renderState.targetX = playerState.position.x;
+        renderState.targetY = playerState.position.y;
+        renderState.circle.setFillStyle(this.resolvePlayerColor(playerState));
     }
 
     private resolvePlayerColor(playerState: PlayerState): number {
