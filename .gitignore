@@ -1,33 +1,43 @@
-# Dependencies
+# =========================
+# Monorepo / pnpm
+# =========================
 node_modules/
 .pnpm-store/
 
-# Build output
+# =========================
+# TypeScript / Build
+# =========================
 dist/
 build/
 coverage/
 .vite/
 *.tsbuildinfo
 
-# Environment files
+# =========================
+# Environment
+# =========================
 .env
 .env.*
 !.env.example
 
+# =========================
 # Logs
+# =========================
 logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Runtime / temp
+# =========================
+# Temp / Cache
+# =========================
 tmp/
 temp/
-*.tmp
+.cache/
 
-# Editor / IDE
+# =========================
+# Editor
+# =========================
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
@@ -38,21 +48,25 @@ temp/
 *.swp
 *.swo
 
-# OS / filesystem
+# =========================
+# OS files
+# =========================
 .DS_Store
 Thumbs.db
 
-# Testing
+# =========================
+# Tests
+# =========================
 playwright-report/
 test-results/
 
-# Local database files
+# =========================
+# Local DBs
+# =========================
 *.sqlite
 *.sqlite3
 
-# Optional generated assets / caches
-.cache/
-.turbo/
-
-# Package manager files to keep
+# =========================
+# Keep lockfile
+# =========================
 !pnpm-lock.yaml
